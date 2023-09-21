@@ -1,0 +1,175 @@
+# Nubank csv parser
+
+```elixir
+Mix.install([
+  {:nimble_csv, "~> 1.2"},
+  {:kino, "~> 0.10.0"}
+])
+```
+
+## Introdução
+
+This livebook was created to suport a monthly routine of extracting data from Nubank csv. The objective is create a list of expends for our household.
+
+Google Sheet format example:
+
+| Competência | Categoria     | Descrição | Pessoa | Data       | Titulo         | Valor  |
+| ------------ | ------------- | ----------- | ------ | ---------- | -------------- | ------ |
+| 01/09/2023   | Alimentação | Feira       | Lucas  | 05/09/2023 | Folhas         | 14,00  |
+| 01/09/2023   | Cachorro      | Extras      | Dayana | 03/09/2023 | Vitória Hotel | 110,00 |
+
+## Define NimbleCSV Parser
+
+```elixir
+NimbleCSV.define(NubankCSV, escape: "\0")
+```
+
+## Define Filter and Transform
+
+```elixir
+defmodule Filter do
+  @filters [
+    "Netflix.Com",
+    "Pag*Laticiniospilates",
+    "Mercadolivre*Nacional",
+    "Prudent*Apol000288379",
+    "Mp *Melimais",
+    "Clinica*Estudio Sante",
+    "Digitalocean.Com",
+    "Mp *Kotas",
+    "Pag. Igti",
+    "Uber *Uber *Trip",
+    "Pagamento recebido"
+  ]
+
+  def filters(), do: @filters
+
+  def has_filtered_title?([]), do: false
+  def has_filtered_title?([""]), do: false
+
+  def has_filtered_title?([_, _, title, _]) do
+    Enum.any?(@filters, fn item -> title =~ item end)
+  end
+end
+```
+
+```elixir
+defmodule Transform do
+  @moduledoc """
+   Transform the nubank csv file to Google Sheet.
+  """
+
+  def to_sheet_format([date, category, title, amount]) do
+    [
+      "",
+      format_category(category, title),
+      format_description(category, title),
+      "Lucas",
+      format_date(date),
+      title,
+      format_amount(amount)
+    ]
+  end
+
+  defp format_amount(amount), do: String.replace(amount, ".", ",")
+
+  defp format_date(date) do
+    date
+    |> Date.from_iso8601!()
+    |> Calendar.strftime("%d/%m/%Y")
+  end
+
+  defp format_category(_other, <<"Supermercados Bh", _::binary>>), do: "Alimentação"
+  defp format_category("supermercado", _title), do: "Alimentação"
+  defp format_category("restaurante", _title), do: "Alimentação"
+  defp format_category("outros", "Belapadoca"), do: "Alimentação"
+  defp format_category("outros", "Casadafruta"), do: "Alimentação"
+  defp format_category("outros", "Feirinha"), do: "Alimentação"
+  defp format_category("outros", "Pag*Henioinaciodasilv"), do: "Alimentação"
+  defp format_category("outros", "Pag*Jras"), do: "Alimentação"
+  defp format_category("outros", "Pag*Laticiniospilates"), do: "Alimentação"
+  defp format_category("outros", "Pag*Welersonpedrosaco"), do: "Alimentação"
+  defp format_category("outros", "Pg *Ton Barraca do A"), do: "Alimentação"
+  defp format_category("outros", "Pg *Ton Boteco do Ze"), do: "Alimentação"
+  defp format_category("outros", "Pg *Ton Imperio da F"), do: "Alimentação"
+  defp format_category("saúde", _title), do: "Casa"
+  defp format_category("transporte", <<"Auto Posto", _::binary>>), do: "Carro"
+  defp format_category("transporte", <<"Posto", _::binary>>), do: "Carro"
+  defp format_category("transporte", <<"Zul 10 Cartoes", _::binary>>), do: "Carro"
+  defp format_category("viagem", _title), do: "Lazer"
+  defp format_category(other, _title), do: "_#{other}_"
+
+  # "format_description will pattern match agains ´category´ and ´title´"
+  # Alimentação
+  defp format_description(_other, <<"Bahamas", _::binary>>), do: "Mercado / Geral"
+  defp format_description(_other, <<"Supermercados Bh", _::binary>>), do: "Mercado / Geral"
+  defp format_description(_other, <<"Acougue", _::binary>>), do: "Açouge"
+  defp format_description(_other, <<"Ifood", _::binary>>), do: "Extras"
+  defp format_description(_other, <<"Rellicario", _::binary>>), do: "Extras"
+  defp format_description(_other, "Pag*Benditaquitandajf"), do: "Almoço"
+  defp format_description(_other, "Pag*Henioinaciodasilv"), do: "Feira"
+  defp format_description(_other, "Pag*Jras"), do: "Feira"
+  defp format_description(_other, "Pag*Laticiniospilates"), do: "Feira"
+  defp format_description(_other, "Pag*Welersonpedrosaco"), do: "Feira"
+  defp format_description(_other, "Pg *Ton Barraca do A"), do: "Feira"
+  defp format_description(_other, "Pg *Ton Boteco do Ze"), do: "Feira"
+  defp format_description(_other, "Pg *Ton Imperio da F"), do: "Feira"
+  defp format_description(_other, "Pag*Barracadupaiva"), do: "Feira"
+  defp format_description(_other, "Pag*Joseronaldosantos"), do: "Feira"
+  defp format_description(_other, "Pag*Viniciuslazarodas"), do: "Feira"
+  defp format_description(_other, "Pag*Matheusfernandes"), do: "Feira"
+  defp format_description(_other, "Pg *Ton Explosao de"), do: "Feira"
+  defp format_description(_other, "Pag*Edisonramosda"), do: "Feira"
+  defp format_description(_other, "Casadafruta"), do: "Feira"
+  defp format_description(_other, "Feirinha"), do: "Feira"
+  defp format_description(_other, "Pag*Barracadoalex"), do: "Feira"
+  # Casa
+  defp format_description(_other, <<"Drogaria", _::binary>>), do: "Farmácia"
+  # Lazer
+  defp format_description("viagem", _title), do: "Viagem"
+  # Carro
+  defp format_description("transporte", <<"Auto Posto", _::binary>>), do: "Combustível"
+  defp format_description("transporte", <<"Posto", _::binary>>), do: "Combustível"
+  defp format_description("transporte", <<"Zul 10 Cartoes", _::binary>>), do: "Estacionamento"
+
+  defp format_description(other, description) do
+    IO.puts("No description for #{other} / #{description}")
+    ""
+  end
+end
+```
+
+## Parse data
+
+```elixir
+base_path = "C:\\Users\\lucas\\Downloads"
+input = File.stream!("#{base_path}\\nubank-2023-09.csv")
+output_file = File.stream!("#{base_path}\\nubank-2023-09_spredsheet.csv")
+```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+# parse input file
+parsed_data =
+  input
+  |> NubankCSV.parse_stream()
+  |> Stream.reject(&Filter.has_filtered_title?(&1))
+  |> Stream.map(&Transform.to_sheet_format(&1))
+```
+
+## Tabulate and show data
+
+```elixir
+columns = ["Competência", "Categoria", "Descrição", "Pessoa", "Data", "Título", "Valor"]
+
+tabular_data =
+  for line <- parsed_data, do: Enum.zip(columns, line)
+```
+
+```elixir
+Kino.DataTable.new(tabular_data,
+  sorting_enabled: false,
+  name: "Registros - Gastos domésticos"
+)
+```
