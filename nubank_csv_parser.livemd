@@ -1,9 +1,11 @@
+<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/livebook/nubank-2024-03.csv"},"name":"nubank-2024-03.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/Downloads/nubank-2024-04.csv"},"name":"nubank-2024-04.csv","type":"file"}]} -->
+
 # Nubank csv parser
 
 ```elixir
 Mix.install([
   {:nimble_csv, "~> 1.2"},
-  {:kino, "~> 0.10.0"}
+  {:kino, "~> 0.12.3"}
 ])
 ```
 
@@ -30,6 +32,7 @@ NimbleCSV.define(NubankCSV, escape: "\0")
 defmodule Filter do
   @filters [
     "Netflix.Com",
+    "Netflix Entretenimento",
     "Pag*Laticiniospilates",
     "Mercadolivre*Nacional",
     "Prudent*Apol000288379",
@@ -39,10 +42,9 @@ defmodule Filter do
     "Mp *Kotas",
     "Pag. Igti",
     "Uber *Uber *Trip",
-    "Pagamento recebido"
+    "Pagamento recebido",
+    "Liberty_brazil Parc"
   ]
-
-  def filters(), do: @filters
 
   def has_filtered_title?([]), do: false
   def has_filtered_title?([""]), do: false
@@ -62,8 +64,8 @@ defmodule Transform do
   def to_sheet_format([date, category, title, amount]) do
     [
       "",
-      format_category(category, title),
-      format_description(category, title),
+      category(category, title),
+      description(category, title),
       "Lucas",
       format_date(date),
       title,
@@ -79,60 +81,131 @@ defmodule Transform do
     |> Calendar.strftime("%d/%m/%Y")
   end
 
-  defp format_category(_other, <<"Supermercados Bh", _::binary>>), do: "Alimentação"
-  defp format_category("supermercado", _title), do: "Alimentação"
-  defp format_category("restaurante", _title), do: "Alimentação"
-  defp format_category("outros", "Belapadoca"), do: "Alimentação"
-  defp format_category("outros", "Casadafruta"), do: "Alimentação"
-  defp format_category("outros", "Feirinha"), do: "Alimentação"
-  defp format_category("outros", "Pag*Henioinaciodasilv"), do: "Alimentação"
-  defp format_category("outros", "Pag*Jras"), do: "Alimentação"
-  defp format_category("outros", "Pag*Laticiniospilates"), do: "Alimentação"
-  defp format_category("outros", "Pag*Welersonpedrosaco"), do: "Alimentação"
-  defp format_category("outros", "Pg *Ton Barraca do A"), do: "Alimentação"
-  defp format_category("outros", "Pg *Ton Boteco do Ze"), do: "Alimentação"
-  defp format_category("outros", "Pg *Ton Imperio da F"), do: "Alimentação"
-  defp format_category("saúde", _title), do: "Casa"
-  defp format_category("transporte", <<"Auto Posto", _::binary>>), do: "Carro"
-  defp format_category("transporte", <<"Posto", _::binary>>), do: "Carro"
-  defp format_category("transporte", <<"Zul 10 Cartoes", _::binary>>), do: "Carro"
-  defp format_category("viagem", _title), do: "Lazer"
-  defp format_category(other, _title), do: "_#{other}_"
+  defp category(_, <<"Bahamas", _::binary>>), do: "Alimentação"
+  defp category(_, <<"Supermercados Bh", _::binary>>), do: "Alimentação"
+  defp category(_, "Mix Ferreira Guimaraes"), do: "Alimentação"
+  defp category(_, "Carrefour Juiz de For"), do: "Alimentação"
+  defp category(_, "iFood"), do: "Alimentação"
+  defp category("supermercado", _), do: "Alimentação"
+  defp category("restaurante", _), do: "Alimentação"
+  defp category(_, "Belapadoca"), do: "Alimentação"
+  defp category(_, "Casadafruta"), do: "Alimentação"
+  defp category(_, "Feirinha"), do: "Alimentação"
+  defp category(_, "Pag*Jras"), do: "Alimentação"
+  defp category(_, "Pag*Henioinaciodasilv"), do: "Alimentação"
+  defp category(_, "Pag*Acouguevidanova"), do: "Alimentação"
+  defp category(_, "Pag*Laticiniospilates"), do: "Alimentação"
+  defp category(_, "Pag*Welersonpedrosaco"), do: "Alimentação"
+  defp category(_, "Pag*Gabrieltoledoda"), do: "Alimentação"
+  defp category(_, "Pg *Ton Barraca do A"), do: "Alimentação"
+  defp category(_, "Pg *Ton Boteco do Ze"), do: "Alimentação"
+  defp category(_, "Pg *Ton Imperio da F"), do: "Alimentação"
+  defp category(_, "Loirinhomudas"), do: "Alimentação"
+  defp category(_, "Wilson Correa"), do: "Alimentação"
+  defp category(_, "Pag*Geziovitaldesouza"), do: "Alimentação"
+  defp category(_, "Picados"), do: "Alimentação"
+  defp category(_, "Mercado Mix Leve Mais"), do: "Alimentação"
+  defp category(_, "Pag*Julianadias"), do: "Alimentação"
+  defp category(_, "Pag*Alexandre"), do: "Alimentação"
+  defp category("saúde", _), do: "Casa"
+  # defp category(_, "_"), do: "Casa"
+  defp category(_, <<"Auto Posto", _::binary>>), do: "Carro"
+  defp category(_, <<"Posto", _::binary>>), do: "Carro"
+  defp category(_, "Carrefour Pst 256 Pcj"), do: "Carro"
+  defp category(_, "Solucoe*Posto de Combu"), do: "Carro"
+  defp category(_, <<"Zul 10 Cartoes", _::binary>>), do: "Carro"
+  defp category(_, "Emp B Estacionamento J"), do: "Carro"
+  defp category(_, "Nux*Servi?O de Estacio"), do: "Carro"
+  defp category(_, "Mecanica Peracci"), do: "Carro"
+  defp category(_, "Estacionamento Braz"), do: "Carro"
+  defp category("viagem", _), do: "Lazer"
+  defp category(_, "Centro Medico Veterina"), do: "Cachorro"
+  defp category(_, "Animaniacs Petshop"), do: "Cachorro"
+  defp category(_, "Pag*Petz"), do: "Cachorro"
+  defp category(other, _), do: "_#{other}_"
 
-  # "format_description will pattern match agains ´category´ and ´title´"
+  # "description will pattern match agains ´category´ and ´title´"
   # Alimentação
-  defp format_description(_other, <<"Bahamas", _::binary>>), do: "Mercado / Geral"
-  defp format_description(_other, <<"Supermercados Bh", _::binary>>), do: "Mercado / Geral"
-  defp format_description(_other, <<"Acougue", _::binary>>), do: "Açouge"
-  defp format_description(_other, <<"Ifood", _::binary>>), do: "Extras"
-  defp format_description(_other, <<"Rellicario", _::binary>>), do: "Extras"
-  defp format_description(_other, "Pag*Benditaquitandajf"), do: "Almoço"
-  defp format_description(_other, "Pag*Henioinaciodasilv"), do: "Feira"
-  defp format_description(_other, "Pag*Jras"), do: "Feira"
-  defp format_description(_other, "Pag*Laticiniospilates"), do: "Feira"
-  defp format_description(_other, "Pag*Welersonpedrosaco"), do: "Feira"
-  defp format_description(_other, "Pg *Ton Barraca do A"), do: "Feira"
-  defp format_description(_other, "Pg *Ton Boteco do Ze"), do: "Feira"
-  defp format_description(_other, "Pg *Ton Imperio da F"), do: "Feira"
-  defp format_description(_other, "Pag*Barracadupaiva"), do: "Feira"
-  defp format_description(_other, "Pag*Joseronaldosantos"), do: "Feira"
-  defp format_description(_other, "Pag*Viniciuslazarodas"), do: "Feira"
-  defp format_description(_other, "Pag*Matheusfernandes"), do: "Feira"
-  defp format_description(_other, "Pg *Ton Explosao de"), do: "Feira"
-  defp format_description(_other, "Pag*Edisonramosda"), do: "Feira"
-  defp format_description(_other, "Casadafruta"), do: "Feira"
-  defp format_description(_other, "Feirinha"), do: "Feira"
-  defp format_description(_other, "Pag*Barracadoalex"), do: "Feira"
-  # Casa
-  defp format_description(_other, <<"Drogaria", _::binary>>), do: "Farmácia"
-  # Lazer
-  defp format_description("viagem", _title), do: "Viagem"
-  # Carro
-  defp format_description("transporte", <<"Auto Posto", _::binary>>), do: "Combustível"
-  defp format_description("transporte", <<"Posto", _::binary>>), do: "Combustível"
-  defp format_description("transporte", <<"Zul 10 Cartoes", _::binary>>), do: "Estacionamento"
+  defp description(_, <<"Bahamas", _::binary>>), do: "Mercado / Geral"
+  defp description(_, <<"Supermercados Bh", _::binary>>), do: "Mercado / Geral"
+  defp description(_, "Mix Ferreira Guimaraes"), do: "Mercado / Geral"
+  defp description(_, "Carrefour Jfo"), do: "Mercado / Geral"
+  defp description(_, "Carrefour Juiz de For"), do: "Mercado / Geral"
+  defp description(_, "Lojas Americanas"), do: "Mercado / Geral"
+  defp description(_, <<"Acougue", _::binary>>), do: "Açouge"
+  defp description(_, "Casa de Carnes Kibife"), do: "Açouge"
+  defp description(_, "Pag*Acouguevidanova"), do: "Açouge"
+  defp description(_, "Frigorifico Jesus e Ab"), do: "Açouge"
+  defp description(_, <<"Ifood", _::binary>>), do: "Ifood"
+  defp description(_, <<"Ifd*", _::binary>>), do: "Ifood"
+  defp description(_, <<"Rellicario", _::binary>>), do: "Extras"
+  defp description(_, "iFood"), do: "Ifood"
+  defp description(_, "Amor & Pao"), do: "Extras"
+  defp description(_, "Padaria Bairu Zona Sul"), do: "Extras"
+  defp description(_, "Pag*Padariaanna"), do: "Extras"
+  defp description(_, "Pag*Vgadistribuidora"), do: "Extras"
+  defp description(_, "Serrano Pre Assadas"), do: "Extras"
+  defp description(_, "Summer Acai"), do: "Extras"
+  defp description(_, "Mandala Lanches"), do: "Almoço"
+  defp description(_, "Pag*Benditaquitandajf"), do: "Almoço"
+  defp description(_, "Plaza Buffet"), do: "Almoço"
+  defp description(_, "Carlos Sodre"), do: "Almoço"
+  defp description(_, "Fogao da Serra Rest."), do: "Almoço"
+  defp description(_, "Loirinhomudas"), do: "Feira"
+  defp description(_, "Pag*Geziovitaldesouza"), do: "Feira"
+  defp description(_, "Tuca"), do: "Feira"
+  defp description(_, "Emporio das Frutas"), do: "Feira"
+  defp description(_, "Sacolao da Luzia"), do: "Feira"
+  defp description(_, "Sacolao da Economia"), do: "Feira"
+  defp description(_, "Mercado Mix Leve Mais"), do: "Feira"
+  defp description(_, "Pg *Ton Barraca do A"), do: "Feira"
+  defp description(_, "Pg *Ton Boteco do Ze"), do: "Feira"
+  defp description(_, "Pg *Ton Imperio da F"), do: "Feira"
+  defp description(_, "Pg *Ton Explosao de"), do: "Feira"
+  defp description(_, "Pg *Ton Marcio Gouve"), do: "Feira"
+  defp description(_, "Pag*Jras"), do: "Feira"
+  defp description(_, "Pag*Julianadias"), do: "Feira"
+  defp description(_, "Pag*Alexandre"), do: "Feira"
+  defp description(_, "Pag*Henioinaciodasilv"), do: "Feira"
+  defp description(_, "Pag*Laticiniospilates"), do: "Feira"
+  defp description(_, "Pag*Gabrieltoledoda"), do: "Feira"
+  defp description(_, "Pag*Welersonpedrosaco"), do: "Feira"
+  defp description(_, "Pag*Barracadupaiva"), do: "Feira"
+  defp description(_, "Pag*Joseronaldosantos"), do: "Feira"
+  defp description(_, "Pag*Viniciuslazarodas"), do: "Feira"
+  defp description(_, "Pag*Matheusfernandes"), do: "Feira"
+  defp description(_, "Pag*Barracadoalex"), do: "Feira"
+  defp description(_, "Pag*Edisonramosda"), do: "Feira"
+  defp description(_, "Pag*Danniellegarciale"), do: "Feira"
+  defp description(_, "Casadafruta"), do: "Feira"
+  defp description(_, "Barraca do Alex"), do: "Feira"
+  defp description(_, "Feirinha"), do: "Feira"
+  defp description(_, "Picados"), do: "Feira"
+  defp description(_, "Wilson Correa"), do: "Feira"
+  defp description(_, "Fabricio Alves da Silv"), do: "Feira"
 
-  defp format_description(other, description) do
+  # Casa
+  defp description(_, <<"Drogaria", _::binary>>), do: "Farmácia"
+  defp description(_, "2472drogasil"), do: "Farmácia"
+  defp description(_, "Paygo*Santa Luzia Gas"), do: "Gás"
+  # Lazer
+  defp description("viagem", _), do: "Viagem"
+  # Carro
+  defp description("transporte", <<"Auto Posto", _::binary>>), do: "Combustível"
+  defp description("transporte", <<"Posto", _::binary>>), do: "Combustível"
+  defp description("transporte", "Carrefour Pst 256 Pcj"), do: "Combustível"
+  defp description("transporte", "Solucoe*Posto de Combu"), do: "Combustível"
+  defp description("transporte", <<"Zul 10 Cartoes", _::binary>>), do: "Estacionamento"
+  defp description("transporte", "Emp B Estacionamento J"), do: "Estacionamento"
+  defp description("transporte", "Nux*Servi?O de Estacio"), do: "Estacionamento"
+  defp description("transporte", "Estacionamento Braz"), do: "Estacionamento"
+  defp description("transporte", "Mecanica Peracci"), do: "Concertos"
+  # Cachorro
+  defp description(_, "Centro Medico Veterina"), do: "Saúde"
+  defp description(_, "Animaniacs Petshop"), do: "Petshop"
+  defp description(_, "Pag*Petz"), do: "Ração"
+
+  defp description(other, description) do
     IO.puts("No description for #{other} / #{description}")
     ""
   end
@@ -142,9 +215,9 @@ end
 ## Parse data
 
 ```elixir
-base_path = "C:\\Users\\lucas\\Downloads"
-input = File.stream!("#{base_path}\\nubank-2023-09.csv")
-output_file = File.stream!("#{base_path}\\nubank-2023-09_spredsheet.csv")
+input =
+  Kino.FS.file_path("nubank-2024-04.csv")
+  |> File.stream!()
 ```
 
 <!-- livebook:{"reevaluate_automatically":true} -->
@@ -160,12 +233,17 @@ parsed_data =
 
 ## Tabulate and show data
 
+<!-- livebook:{"reevaluate_automatically":true} -->
+
 ```elixir
 columns = ["Competência", "Categoria", "Descrição", "Pessoa", "Data", "Título", "Valor"]
 
 tabular_data =
-  for line <- parsed_data, do: Enum.zip(columns, line)
+  for line <- parsed_data,
+      do: Enum.zip(columns, line)
 ```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
 
 ```elixir
 Kino.DataTable.new(tabular_data,
@@ -173,3 +251,5 @@ Kino.DataTable.new(tabular_data,
   name: "Registros - Gastos domésticos"
 )
 ```
+
+<!-- livebook:{"offset":10099,"stamp":{"token":"XCP.aJUXM8BVLLqbe_PEqPf8LcJmYT3PuDL4Wa_z0TU8DHo916txWyx-G3h1ZIQlcFnlDFVsudzd6ntdjZPKyOV2vtygnCwXFSOjYnmvGdKxM50f7rohhKcIHZuKUT-SNbsuUC3HR5v4HNI","version":2}} -->
