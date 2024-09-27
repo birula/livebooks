@@ -1,11 +1,11 @@
-<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/livebook/nubank-2024-03.csv"},"name":"nubank-2024-03.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/Downloads/nubank-2024-04.csv"},"name":"nubank-2024-04.csv","type":"file"}]} -->
+<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/livebook/nubank-2024-03.csv"},"name":"nubank-2024-03.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/Downloads/nubank-2024-04.csv"},"name":"nubank-2024-04.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/nubank-2024-08.csv"},"name":"nubank-2024-08.csv","type":"file"}]} -->
 
 # Nubank csv parser
 
 ```elixir
 Mix.install([
   {:nimble_csv, "~> 1.2"},
-  {:kino, "~> 0.12.3"}
+  {:kino, "~> 0.14.0"}
 ])
 ```
 
@@ -43,7 +43,8 @@ defmodule Filter do
     "Pag. Igti",
     "Uber *Uber *Trip",
     "Pagamento recebido",
-    "Liberty_brazil Parc"
+    "Liberty_brazil Parc",
+    "Link - Cldb Servicos 3/6" # ar-condicionado
   ]
 
   def has_filtered_title?([]), do: false
@@ -108,6 +109,7 @@ defmodule Transform do
   defp category(_, "Pag*Julianadias"), do: "Alimentação"
   defp category(_, "Pag*Alexandre"), do: "Alimentação"
   defp category("saúde", _), do: "Casa"
+  defp category(_, "Paygo*Santa Luzia Gas"), do: "Casa"
   # defp category(_, "_"), do: "Casa"
   defp category(_, <<"Auto Posto", _::binary>>), do: "Carro"
   defp category(_, <<"Posto", _::binary>>), do: "Carro"
@@ -122,7 +124,7 @@ defmodule Transform do
   defp category(_, "Centro Medico Veterina"), do: "Cachorro"
   defp category(_, "Animaniacs Petshop"), do: "Cachorro"
   defp category(_, "Pag*Petz"), do: "Cachorro"
-  defp category(other, _), do: "_#{other}_"
+  defp category(_, _), do: ""
 
   # "description will pattern match agains ´category´ and ´title´"
   # Alimentação
@@ -206,7 +208,6 @@ defmodule Transform do
   defp description(_, "Pag*Petz"), do: "Ração"
 
   defp description(other, description) do
-    IO.puts("No description for #{other} / #{description}")
     ""
   end
 end
@@ -216,7 +217,7 @@ end
 
 ```elixir
 input =
-  Kino.FS.file_path("nubank-2024-04.csv")
+  Kino.FS.file_path("nubank-2024-08.csv")
   |> File.stream!()
 ```
 
@@ -236,20 +237,47 @@ parsed_data =
 <!-- livebook:{"reevaluate_automatically":true} -->
 
 ```elixir
-columns = ["Competência", "Categoria", "Descrição", "Pessoa", "Data", "Título", "Valor"]
+defmodule FormatData do
 
-tabular_data =
-  for line <- parsed_data,
-      do: Enum.zip(columns, line)
+  @columns ["Competência", "Categoria", "Descrição", "Pessoa", "Data", "Título", "Valor"]
+
+  def tabulate(parsed_data) do
+    for line <- parsed_data, do: Enum.zip(@columns, line)
+  end
+
+  def show_blank_categories(list) do
+    list
+    |> Enum.filter(fn (items) -> find_blank(items) end)
+  end
+
+  defp find_blank(items) do
+    Enum.any?(items, fn (item) -> find_blank_internal(item) end)
+  end
+
+  defp find_blank_internal({"Competencia", ""} = _item), do: true
+  defp find_blank_internal({"Descrição", ""} = _item), do: true
+  defp find_blank_internal(_item), do: false
+end
+
+# FormatData.tabulate(parsed_data)
+# |> Enum.take(2) 
+# |> FilterBlank.filter()
+# |> Enum.map(fn (list) -> get_in(list, [Access.at(0)]) end)
+# |> get_in([Access.filter("" == "")])
+# |> Enum.count()
+
 ```
 
 <!-- livebook:{"reevaluate_automatically":true} -->
 
 ```elixir
-Kino.DataTable.new(tabular_data,
-  sorting_enabled: false,
-  name: "Registros - Gastos domésticos"
-)
+FormatData.tabulate(parsed_data)
+|> FormatData.show_blank_categories()
+|> Kino.DataTable.new(
+    sorting_enabled: false,
+    name: "Registros - Gastos domésticos"
+  )
+
 ```
 
-<!-- livebook:{"offset":10099,"stamp":{"token":"XCP.aJUXM8BVLLqbe_PEqPf8LcJmYT3PuDL4Wa_z0TU8DHo916txWyx-G3h1ZIQlcFnlDFVsudzd6ntdjZPKyOV2vtygnCwXFSOjYnmvGdKxM50f7rohhKcIHZuKUT-SNbsuUC3HR5v4HNI","version":2}} -->
+<!-- livebook:{"offset":10996,"stamp":{"token":"XCP.qd1yX7jRrUU8STk873Ypj8dLr1GO6erHqEOsm-xAT78tsG72SXYQwbVuLaSLg4acFYY95QP0F8aIWvibmt_US4In7jDHH8sPWYGaJ8VsjUi7iD7vBrg7PIHnNfyflPWDP9_meZiNiAYhqvIFD3K37fXLJK5ULGkPO2nJcLRw6g","version":2}} -->
