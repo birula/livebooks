@@ -1,4 +1,4 @@
-<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/livebook/nubank-2024-03.csv"},"name":"nubank-2024-03.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/Downloads/nubank-2024-04.csv"},"name":"nubank-2024-04.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/nubank-2024-08.csv"},"name":"nubank-2024-08.csv","type":"file"}]} -->
+<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/Nubank_2024-09-27.csv"},"name":"Nubank_2024-09-27.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/livebook/nubank-2024-03.csv"},"name":"nubank-2024-03.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/Downloads/nubank-2024-04.csv"},"name":"nubank-2024-04.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/nubank-2024-08.csv"},"name":"nubank-2024-08.csv","type":"file"}]} -->
 
 # Nubank csv parser
 
@@ -63,10 +63,11 @@ defmodule Transform do
   """
 
   def to_sheet_format([date, category, title, amount]) do
+    { category, description } = categorise(category, title)
     [
       "",
-      category(category, title),
-      description(category, title),
+      category,
+      description,
       "Lucas",
       format_date(date),
       title,
@@ -82,134 +83,126 @@ defmodule Transform do
     |> Calendar.strftime("%d/%m/%Y")
   end
 
-  defp category(_, <<"Bahamas", _::binary>>), do: "Alimentação"
-  defp category(_, <<"Supermercados Bh", _::binary>>), do: "Alimentação"
-  defp category(_, "Mix Ferreira Guimaraes"), do: "Alimentação"
-  defp category(_, "Carrefour Juiz de For"), do: "Alimentação"
-  defp category(_, "iFood"), do: "Alimentação"
-  defp category("supermercado", _), do: "Alimentação"
-  defp category("restaurante", _), do: "Alimentação"
-  defp category(_, "Belapadoca"), do: "Alimentação"
-  defp category(_, "Casadafruta"), do: "Alimentação"
-  defp category(_, "Feirinha"), do: "Alimentação"
-  defp category(_, "Pag*Jras"), do: "Alimentação"
-  defp category(_, "Pag*Henioinaciodasilv"), do: "Alimentação"
-  defp category(_, "Pag*Acouguevidanova"), do: "Alimentação"
-  defp category(_, "Pag*Laticiniospilates"), do: "Alimentação"
-  defp category(_, "Pag*Welersonpedrosaco"), do: "Alimentação"
-  defp category(_, "Pag*Gabrieltoledoda"), do: "Alimentação"
-  defp category(_, "Pg *Ton Barraca do A"), do: "Alimentação"
-  defp category(_, "Pg *Ton Boteco do Ze"), do: "Alimentação"
-  defp category(_, "Pg *Ton Imperio da F"), do: "Alimentação"
-  defp category(_, "Loirinhomudas"), do: "Alimentação"
-  defp category(_, "Wilson Correa"), do: "Alimentação"
-  defp category(_, "Pag*Geziovitaldesouza"), do: "Alimentação"
-  defp category(_, "Picados"), do: "Alimentação"
-  defp category(_, "Mercado Mix Leve Mais"), do: "Alimentação"
-  defp category(_, "Pag*Julianadias"), do: "Alimentação"
-  defp category(_, "Pag*Alexandre"), do: "Alimentação"
-  defp category("saúde", _), do: "Casa"
-  defp category(_, "Paygo*Santa Luzia Gas"), do: "Casa"
-  # defp category(_, "_"), do: "Casa"
-  defp category(_, <<"Auto Posto", _::binary>>), do: "Carro"
-  defp category(_, <<"Posto", _::binary>>), do: "Carro"
-  defp category(_, "Carrefour Pst 256 Pcj"), do: "Carro"
-  defp category(_, "Solucoe*Posto de Combu"), do: "Carro"
-  defp category(_, <<"Zul 10 Cartoes", _::binary>>), do: "Carro"
-  defp category(_, "Emp B Estacionamento J"), do: "Carro"
-  defp category(_, "Nux*Servi?O de Estacio"), do: "Carro"
-  defp category(_, "Mecanica Peracci"), do: "Carro"
-  defp category(_, "Estacionamento Braz"), do: "Carro"
-  defp category("viagem", _), do: "Lazer"
-  defp category(_, "Centro Medico Veterina"), do: "Cachorro"
-  defp category(_, "Animaniacs Petshop"), do: "Cachorro"
-  defp category(_, "Pag*Petz"), do: "Cachorro"
-  defp category(_, _), do: ""
-
-  # "description will pattern match agains ´category´ and ´title´"
-  # Alimentação
-  defp description(_, <<"Bahamas", _::binary>>), do: "Mercado / Geral"
-  defp description(_, <<"Supermercados Bh", _::binary>>), do: "Mercado / Geral"
-  defp description(_, "Mix Ferreira Guimaraes"), do: "Mercado / Geral"
-  defp description(_, "Carrefour Jfo"), do: "Mercado / Geral"
-  defp description(_, "Carrefour Juiz de For"), do: "Mercado / Geral"
-  defp description(_, "Lojas Americanas"), do: "Mercado / Geral"
-  defp description(_, <<"Acougue", _::binary>>), do: "Açouge"
-  defp description(_, "Casa de Carnes Kibife"), do: "Açouge"
-  defp description(_, "Pag*Acouguevidanova"), do: "Açouge"
-  defp description(_, "Frigorifico Jesus e Ab"), do: "Açouge"
-  defp description(_, <<"Ifood", _::binary>>), do: "Ifood"
-  defp description(_, <<"Ifd*", _::binary>>), do: "Ifood"
-  defp description(_, <<"Rellicario", _::binary>>), do: "Extras"
-  defp description(_, "iFood"), do: "Ifood"
-  defp description(_, "Amor & Pao"), do: "Extras"
-  defp description(_, "Padaria Bairu Zona Sul"), do: "Extras"
-  defp description(_, "Pag*Padariaanna"), do: "Extras"
-  defp description(_, "Pag*Vgadistribuidora"), do: "Extras"
-  defp description(_, "Serrano Pre Assadas"), do: "Extras"
-  defp description(_, "Summer Acai"), do: "Extras"
-  defp description(_, "Mandala Lanches"), do: "Almoço"
-  defp description(_, "Pag*Benditaquitandajf"), do: "Almoço"
-  defp description(_, "Plaza Buffet"), do: "Almoço"
-  defp description(_, "Carlos Sodre"), do: "Almoço"
-  defp description(_, "Fogao da Serra Rest."), do: "Almoço"
-  defp description(_, "Loirinhomudas"), do: "Feira"
-  defp description(_, "Pag*Geziovitaldesouza"), do: "Feira"
-  defp description(_, "Tuca"), do: "Feira"
-  defp description(_, "Emporio das Frutas"), do: "Feira"
-  defp description(_, "Sacolao da Luzia"), do: "Feira"
-  defp description(_, "Sacolao da Economia"), do: "Feira"
-  defp description(_, "Mercado Mix Leve Mais"), do: "Feira"
-  defp description(_, "Pg *Ton Barraca do A"), do: "Feira"
-  defp description(_, "Pg *Ton Boteco do Ze"), do: "Feira"
-  defp description(_, "Pg *Ton Imperio da F"), do: "Feira"
-  defp description(_, "Pg *Ton Explosao de"), do: "Feira"
-  defp description(_, "Pg *Ton Marcio Gouve"), do: "Feira"
-  defp description(_, "Pag*Jras"), do: "Feira"
-  defp description(_, "Pag*Julianadias"), do: "Feira"
-  defp description(_, "Pag*Alexandre"), do: "Feira"
-  defp description(_, "Pag*Henioinaciodasilv"), do: "Feira"
-  defp description(_, "Pag*Laticiniospilates"), do: "Feira"
-  defp description(_, "Pag*Gabrieltoledoda"), do: "Feira"
-  defp description(_, "Pag*Welersonpedrosaco"), do: "Feira"
-  defp description(_, "Pag*Barracadupaiva"), do: "Feira"
-  defp description(_, "Pag*Joseronaldosantos"), do: "Feira"
-  defp description(_, "Pag*Viniciuslazarodas"), do: "Feira"
-  defp description(_, "Pag*Matheusfernandes"), do: "Feira"
-  defp description(_, "Pag*Barracadoalex"), do: "Feira"
-  defp description(_, "Pag*Edisonramosda"), do: "Feira"
-  defp description(_, "Pag*Danniellegarciale"), do: "Feira"
-  defp description(_, "Casadafruta"), do: "Feira"
-  defp description(_, "Barraca do Alex"), do: "Feira"
-  defp description(_, "Feirinha"), do: "Feira"
-  defp description(_, "Picados"), do: "Feira"
-  defp description(_, "Wilson Correa"), do: "Feira"
-  defp description(_, "Fabricio Alves da Silv"), do: "Feira"
-
+  # Alimentação - Açouge
+  defp categorise(_, "Casa de Carnes Kibife"), do: { "Alimentação", "Açouge" }
+  defp categorise(_, "Frigorifico Jesus e Ab"), do: { "Alimentação", "Açouge" }
+  defp categorise(_, "Pag*Acouguevidanova"), do: { "Alimentação", "Açouge" }
+  defp categorise(_, <<"Acougue", _::binary>>), do: { "Alimentação", "Açouge" }
+  defp categorise(_, "Carlos Sodre"), do: { "Alimentação", "Almoço" }
+  defp categorise(_, "Cascatinha C Club"), do: { "Alimentação", "Almoço" }
+  defp categorise(_, "Fogao da Serra Rest."), do: { "Alimentação", "Almoço" }
+  defp categorise(_, "Mandala Lanches"), do: { "Alimentação", "Almoço" }
+  defp categorise(_, "Pag*Benditaquitandajf"), do: { "Alimentação", "Almoço" }
+  defp categorise(_, "Plaza Buffet"), do: { "Alimentação", "Almoço" }
+  # Alimentação - Extras
+  defp categorise(_, "Amor & Pao"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Belapadoca"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Grao Moente"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Bom Pastor"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Labareda Bar e Restau"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Vga Distribuidora"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Padaria Bairu Zona Sul"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Padaria Conquista"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Padaria Estrela Branca"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Padariaboavista"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Pag*Padariaanna"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Pag*Vgadistribuidora"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Serrano Pre Assadas"), do: { "Alimentação", "Extras" }
+  defp categorise(_, "Summer Acai"), do: { "Alimentação", "Extras" }
+  defp categorise(_, <<"Rellicario", _::binary>>), do: { "Alimentação", "Extras" }
+  # Alimentação - Feira
+  defp categorise(_, "Barraca do Alex"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Casadafruta"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Daniel Aparecido Aran"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Emporio das Frutas"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Fabricio Alves da Silv"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Feiralivre"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Feirinha"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Jras"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Loirinhomudas"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Mercado Mix Leve Mais"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Alexandre"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Barracadoalex"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Barracadupaiva"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Danniellegarciale"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Edisonramosda"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Gabrieltoledoda"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Geziovitaldesouza"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Henioinaciodasilv"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Joseronaldosantos"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Jras"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Julianadias"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Juquita"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Laticiniospilates"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Matheusfernandes"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Viniciuslazarodas"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pag*Welersonpedrosaco"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Passomar Alimentos"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pg *Ton Barraca do A"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pg *Ton Boteco do Ze"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pg *Ton Explosao de"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pg *Ton Imperio da F"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pg *Ton Marcio Gouve"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pg *Ton Marlon Feira"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Pg *Ton Picados Art"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Picados"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Joseronaldosantos"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Sacolao da Economia"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Sacolao da Luzia"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Tuca"), do: { "Alimentação", "Feira" }
+  defp categorise(_, "Wilson Correa"), do: { "Alimentação", "Feira" }
+  # Alimentação - Mercado / Geral
+  defp categorise(_, "Carrefour Jfo"), do: { "Alimentação", "Mercado / Geral" }
+  defp categorise(_, "Carrefour Juiz de For"), do: { "Alimentação", "Mercado / Geral" }
+  defp categorise(_, "Lojas Americanas"), do: { "Alimentação", "Mercado / Geral" }
+  defp categorise(_, "Mix Ferreira Guimaraes"), do: { "Alimentação", "Mercado / Geral" }
+  defp categorise(_, <<"Bahamas", _::binary>>), do: { "Alimentação", "Mercado / Geral" }
+  defp categorise(_, <<"Supermercados Bh", _::binary>>), do: { "Alimentação", "Mercado / Geral" }
+  # Alimentação - Ifood
+  defp categorise(_, "iFood - NuPay"), do: { "Alimentação", "Ifood" }
+  defp categorise(_, "iFood"), do: { "Alimentação", "Ifood" }
+  defp categorise(_, <<"Ifd*", _::binary>>), do: { "Alimentação", "Ifood" }
+  defp categorise(_, <<"Ifood", _::binary>>), do: { "Alimentação", "Ifood" }
+  # Alimentação - Padrão 
+  defp categorise("restaurante", _), do: { "Alimentação", "" }
+  defp categorise("supermercado", _), do: { "Alimentação", "" }
   # Casa
-  defp description(_, <<"Drogaria", _::binary>>), do: "Farmácia"
-  defp description(_, "2472drogasil"), do: "Farmácia"
-  defp description(_, "Paygo*Santa Luzia Gas"), do: "Gás"
-  # Lazer
-  defp description("viagem", _), do: "Viagem"
+  defp categorise(_, <<"Drogaria", _::binary>>), do: { "Casa", "Farmácia"}
+  defp categorise("saúde", _), do: { "Casa", }
+  defp categorise(_, "Paygo*Santa Luzia Gas"), do: { "Casa", "Gás"}
+  defp categorise(_, "2472drogasil"), do: { "Casa", "Farmácia" }
+  defp categorise(_, <<"Drogasil", _::binary>>), do: { "Casa", "Farmácia" }
+  defp categorise(_, "Twynmaterial"), do: { "Casa", "Mudança" }
   # Carro
-  defp description("transporte", <<"Auto Posto", _::binary>>), do: "Combustível"
-  defp description("transporte", <<"Posto", _::binary>>), do: "Combustível"
-  defp description("transporte", "Carrefour Pst 256 Pcj"), do: "Combustível"
-  defp description("transporte", "Solucoe*Posto de Combu"), do: "Combustível"
-  defp description("transporte", <<"Zul 10 Cartoes", _::binary>>), do: "Estacionamento"
-  defp description("transporte", "Emp B Estacionamento J"), do: "Estacionamento"
-  defp description("transporte", "Nux*Servi?O de Estacio"), do: "Estacionamento"
-  defp description("transporte", "Estacionamento Braz"), do: "Estacionamento"
-  defp description("transporte", "Mecanica Peracci"), do: "Concertos"
+  defp categorise(_, "Liberty Parc"), do: { "Carro", "Seguro" }
+  defp categorise(_, <<"Auto Posto", _::binary>>), do: { "Carro", "Combustível" }
+  defp categorise(_, <<"Posto", _::binary>>), do: { "Carro", "Combustível" }
+  defp categorise(_, "Carrefour Pst 256 Pcj"), do: { "Carro", "Combustível" }
+  defp categorise(_, "Solucoe*Posto de Combu"), do: { "Carro", "Combustível" }
+  defp categorise(_, <<"Zul 10 Cartoes", _::binary>>), do: { "Carro", "Estacionamento" }
+  defp categorise(_, "Emp B Estacionamento J"), do: { "Carro", "Estacionamento" }
+  defp categorise(_, "Nux*Servi?O de Estacio"), do: { "Carro", "Estacionamento" }
+  defp categorise(_, "Estacionamento Braz"), do: { "Carro", "Estacionamento" }
+  defp categorise(_, "Transação de NuTag"), do: { "Carro", "Estacionamento" }
+  defp categorise(_, "Mecanica Peracci"), do: { "Carro", "Concertos" }
+  # lazer
+  defp categorise("viagem", _), do: { "Lazer", "Viagem"}
+  defp categorise(_, "Varandao Bh Rio Restau"), do: { "Lazer", "Viagem"}
+  defp categorise(_, "Ciceroalves"), do: { "Lazer", "Viagem"}
+  defp categorise(_, "Nosso Pao de Queijo"), do: { "Lazer", "Viagem"}
+  defp categorise(_, "Nosso Pao de Queijo Ii"), do: { "Lazer", "Viagem"}
+  defp categorise(_, "Mariaaparecidahor"), do: { "Lazer", "Viagem"}
+  defp categorise(_, "Serjainemendes"), do: { "Lazer", "Viagem"}
+  defp categorise(_, "Tarcisio Siqueira"), do: { "Lazer", "Viagem"}
   # Cachorro
-  defp description(_, "Centro Medico Veterina"), do: "Saúde"
-  defp description(_, "Animaniacs Petshop"), do: "Petshop"
-  defp description(_, "Pag*Petz"), do: "Ração"
+  defp categorise(_, "Centro Medico Veterina"), do: { "Cachorro", "Saúde"}
+  defp categorise(_, "Animaniacs Petshop"), do: { "Cachorro", "Petshop"}
+  defp categorise(_, "Pag*Petz"), do: { "Cachorro", "Ração"}
+  # Luna
+  defp categorise(_, "Anjoanasmoda"), do: { "Luna", "Enxoval" }
 
-  defp description(other, description) do
-    ""
-  end
+  # Default
+  defp categorise(_, _), do: { "", "" }
 end
 ```
 
@@ -217,7 +210,7 @@ end
 
 ```elixir
 input =
-  Kino.FS.file_path("nubank-2024-08.csv")
+  Kino.FS.file_path("Nubank_2024-09-27.csv")
   |> File.stream!()
 ```
 
@@ -254,7 +247,7 @@ defmodule FormatData do
     Enum.any?(items, fn (item) -> find_blank_internal(item) end)
   end
 
-  defp find_blank_internal({"Competencia", ""} = _item), do: true
+  defp find_blank_internal({"Categoria", ""} = _item), do: true
   defp find_blank_internal({"Descrição", ""} = _item), do: true
   defp find_blank_internal(_item), do: false
 end
@@ -268,11 +261,13 @@ end
 
 ```
 
+## Results
+
 <!-- livebook:{"reevaluate_automatically":true} -->
 
 ```elixir
 FormatData.tabulate(parsed_data)
-|> FormatData.show_blank_categories()
+# |> FormatData.show_blank_categories()
 |> Kino.DataTable.new(
     sorting_enabled: false,
     name: "Registros - Gastos domésticos"
@@ -280,4 +275,4 @@ FormatData.tabulate(parsed_data)
 
 ```
 
-<!-- livebook:{"offset":10996,"stamp":{"token":"XCP.qd1yX7jRrUU8STk873Ypj8dLr1GO6erHqEOsm-xAT78tsG72SXYQwbVuLaSLg4acFYY95QP0F8aIWvibmt_US4In7jDHH8sPWYGaJ8VsjUi7iD7vBrg7PIHnNfyflPWDP9_meZiNiAYhqvIFD3K37fXLJK5ULGkPO2nJcLRw6g","version":2}} -->
+<!-- livebook:{"offset":12416,"stamp":{"token":"XCP.QSj8U33RVsCTrIoy-VNvbGVMDCpWJliV0iwnZFUm0ehsEIIMilDc10kO1ldiiYg5ck5lEfUndbynjSx7Na5hGpvS6nIiLi9iHDppQqI1B7XVkHuCwZHj4XMQM-W9YYz3G0PwFWnqB384CBqQKYAdwYTZkT7Wg0MeN35cJyOYXw","version":2}} -->
