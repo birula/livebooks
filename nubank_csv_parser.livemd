@@ -1,4 +1,4 @@
-<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/Nubank_2025-01-27.csv"},"name":"Nubank_2025-01-27.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/Nubank_2025-02-27.csv"},"name":"Nubank_2025-02-27.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/Nubank_2025-03-27.csv"},"name":"Nubank_2025-03-27.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/Nubank_2025-04-27.csv"},"name":"Nubank_2025-04-27.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/dev/livebooks/Nubank_2025-08-27.csv"},"name":"Nubank_2025-08-27.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/Nubank_2025-09-27.csv"},"name":"Nubank_2025-09-27.csv","type":"file"},{"file":{"file_system_id":"local","file_system_type":"local","path":"c:/Users/ThinkPad/Downloads/Nubank_2025-10-27.csv"},"name":"Nubank_2025-10-27.csv","type":"file"}]} -->
+<!-- livebook:{"file_entries":[{"file":{"file_system_id":"local","file_system_type":"local","path":"/home/lucas/livebooks/Nubank_2025-11-27.csv"},"name":"Nubank_2025-11-27.csv","type":"file"}]} -->
 
 # Nubank csv parser
 
@@ -23,7 +23,7 @@ Google Sheet format example:
 ## Define Variables
 
 ```elixir
-csv_file_path = "Nubank_2025-09-27.csv"
+csv_file_path = "Nubank_2025-11-27.csv"
 ```
 
 ## Define NimbleCSV Parser
@@ -121,6 +121,7 @@ defmodule Transform do
   defp categorise("Plaza Buffet"), do: { "Alimentação", "Almoço" }
   defp categorise("Alzirareginada"), do: { "Alimentação", "Almoço" }
   defp categorise("Jf Saint Tropez Pizzar"), do: { "Alimentação", "Almoço" }
+  defp categorise("Sartoni Steakhouse Ala"), do: {"Alimentação", "Almoço"}
   # Alimentação - Extras
   defp categorise("Amor & Pao"), do: { "Alimentação", "Extras" }
   defp categorise("Belapadoca"), do: { "Alimentação", "Extras" }
@@ -153,7 +154,6 @@ defmodule Transform do
   defp categorise("Pizzaria 4a"), do: { "Alimentação", "Extras" }
   defp categorise("Bar Mandala"), do: { "Alimentação", "Extras" }
   defp categorise("Dominos Sao Mateus"), do: { "Alimentação", "Extras" }
-  defp categorise("Cafeteria Grao Moente"), do: { "Alimentação", "Extras" }
   defp categorise("Lanchonetepaula"), do: { "Alimentação", "Extras" }
   defp categorise("Sushi Box"), do: { "Alimentação", "Extras" }
   defp categorise("Sushi 2 You"), do: { "Alimentação", "Extras" }
@@ -165,6 +165,8 @@ defmodule Transform do
   defp categorise("Empadonuts"), do: { "Alimentação", "Extras" }
   defp categorise("Deligeli Sao Pedro Jf"), do: { "Alimentação", "Extras" }
   defp categorise("Padaria Manchester"), do: { "Alimentação", "Extras" }
+  defp categorise("Padaria Delicia de Pao"), do: { "Alimentação", "Extras" }
+  defp categorise("Emporiotarhib"), do: { "Alimentação", "Extras" }
   defp categorise(<<"Rellicario", _::binary>>), do: { "Alimentação", "Extras" }
   defp categorise(<<"Sr A Granel", _::binary>>), do: { "Alimentação", "Extras" }
   # Alimentação - Feira
@@ -207,7 +209,6 @@ defmodule Transform do
   defp categorise("Pg *Ton Marlon Feira"), do: { "Alimentação", "Feira" }
   defp categorise("Pg *Ton Picados Art"), do: { "Alimentação", "Feira" }
   defp categorise("Picados"), do: { "Alimentação", "Feira" }
-  defp categorise("Daianenairadasilv"), do: { "Alimentação", "Feira" }
   defp categorise("Pollyana da Silva Ferr"), do: { "Alimentação", "Feira" }
   defp categorise("Felipefranciscofi"), do: { "Alimentação", "Feira" }
   defp categorise("Joseronaldosantos"), do: { "Alimentação", "Feira" }
@@ -225,7 +226,6 @@ defmodule Transform do
   defp categorise("Juliopedro"), do: { "Alimentação", "Feira" }
   defp categorise("Dirceuarmandodos"), do: { "Alimentação", "Feira" }
   defp categorise("Barraca da Juliana"), do: { "Alimentação", "Feira" }
-  defp categorise("Wemersonn Sollyzz"), do: { "Alimentação", "Feira" }
   defp categorise("Danniellegarciale"), do: { "Alimentação", "Feira" }
   defp categorise("Lucilearibeirode"), do: { "Alimentação", "Feira" }
   defp categorise("Daianenairadasilv"), do: { "Alimentação", "Feira" }
@@ -234,11 +234,9 @@ defmodule Transform do
   defp categorise("Hortalicasmes"), do: { "Alimentação", "Feira" }
   defp categorise("Guto Jf Ltda."), do: { "Alimentação", "Feira" }
   defp categorise("Tarcisiodasilva"), do: { "Alimentação", "Feira" }
-  defp categorise("Supermercado Lis"), do: { "Alimentação", "Feira" }
-  defp categorise("Aloisio Carlos"), do: { "Alimentação", "Feira" }
   defp categorise("Lauracamargode"), do: { "Alimentação", "Feira" }
   defp categorise("Aloisio Carlos"), do: { "Alimentação", "Feira" }
-  defp categorise(""), do: { "Alimentação", "Feira" }
+    
   # Alimentação - Mercado / Geral
   defp categorise("Carrefour Jfo"), do: { "Alimentação", "Mercado / Geral" }
   defp categorise("Carrefour Juiz de For"), do: { "Alimentação", "Mercado / Geral" }
@@ -270,6 +268,9 @@ defmodule Transform do
   defp categorise("Cacula Juiz de Fora"), do: { "Casa", "Extras" }
   defp categorise("Studio de Beleza Gilma"), do: { "Casa", "Extras" }
   defp categorise("Casadochuveiro"), do: { "Casa", "Extras" }
+  defp categorise(<<"Nl Tintas e Ferragens - Parcela", _::binary>>), do: { "Casa", "Obra" }
+  defp categorise(<<"Comercial Niular - Parcela", _::binary>>), do: { "Casa", "Obra" }
+  defp categorise(<<"Shopee", _::binary>>), do: { "Casa", "Mudança" }
   
   # Carro
   defp categorise(<<"Uber Uber", _::binary>>), do: { "Carro", "Uber" }
@@ -330,6 +331,8 @@ defmodule Transform do
   defp categorise("Brinquedao"), do: { "Luna", "Extras" }
   defp categorise("Tete Festas"), do: { "Luna", "Extras" }
   defp categorise("Fl *Vinklopresentes"), do: { "Luna", "Extras" }
+  defp categorise(<<"Cr *Mais Uni - Parcela", _::binary>>), do: { "Luna", "Escola" }
+    
 
   # Default
   defp categorise(_), do: { "", "" }
@@ -407,4 +410,4 @@ FormatData.tabulate(parsed_data)
 
 ```
 
-<!-- livebook:{"offset":20724,"stamp":{"token":"XCP.YHzdvhNvfE6ZGpBssB5ZCc_D9gzBIGEQwuvKU6IZTxIKRnvTa2Gefmmhy8QF0FnuTHHEBnaeqJthbudFW7LwmmgVvcAq53ZiTf-c9cVUgoPHQ5PsoHxmV0fZ5rv_xtRo56WQRxkvCivlpdOv2dzYgDC8ESt3FvWsFLLwKXNMzZNbEpNgIeDuuWDegK7QCcOORgPrEIRe0YK2gqDxQzcsBWYIETLa_ls0G-ZbE_xc2Ik9vS3QWh7EaDHJVOYli_efXsFe7mJAkK3xTaZeCoTO9Sgsqryy6dvDxCHhcuTTo2j_zUE1JJD64luvw76AJeoNx34MrJ9N-IqVHSs964BfFIQfjotqxDk","version":2}} -->
+<!-- livebook:{"offset":19862,"stamp":{"token":"XCP.hcqf366F0pbPKuOoC4GSSbXyCC_1lD-UxJbpFvZ47CnoEaBqkTsA2n4nSiZI5V_LRklYUvaIn0KHLS-F1aoomBjmbsgZcAqVdL1hPQ","version":2}} -->
