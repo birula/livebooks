@@ -44,6 +44,7 @@ defmodule Filter do
     "Vero Internet", # Vero aparece no cabeçalho do mes na planilha
     "Netflix.Com",
     "Netflix Entretenimento",
+    "Google One",
     "Pag*Laticiniospilates",
     "Mercadolivre*Nacional",
     "Prudent*Apol000288379",
@@ -54,7 +55,6 @@ defmodule Filter do
     "Digitalocean.Com",
     "Mp *Kotas",
     "Pag. Igti",
-    "Google One",
     # Carro - Seguro
     "Liberty_brazil Parc",
     ~r/(Yelumseg Parc)\d+/,
@@ -63,6 +63,9 @@ defmodule Filter do
     # Mensagens Nubank
     "Pagamento recebido",
     "Saldo restante da fatura anterior",
+    "Nubank Ultravioleta",
+    "Flanesly",
+    "Big Sorte Loterias"
   ]
 
   def has_filtered_title?([]), do: false
@@ -108,6 +111,7 @@ defmodule Transform do
   defp categorise("Frigorifico Jesus e Ab"), do: { "Alimentação", "Açouge" }
   defp categorise("Pag*Acouguevidanova"), do: { "Alimentação", "Açouge" }
   defp categorise(<<"Acougue", _::binary>>), do: { "Alimentação", "Açouge" }
+  defp categorise("Casa de Carnes Jesus e"), do: { "Alimentação", "Açouge" }
   # Alimentação - Almoço
   defp categorise("Carlos Sodre"), do: { "Alimentação", "Almoço" }
   defp categorise("Cascatinha C Club"), do: { "Alimentação", "Almoço" }
@@ -142,6 +146,25 @@ defmodule Transform do
   defp categorise("Pad Sabor da Praca"), do: { "Alimentação", "Extras" }
   defp categorise("Wemersonn Sollyzz"), do: { "Alimentação", "Extras" }
   defp categorise("Rcfrios"), do: { "Alimentação", "Extras" }
+  defp categorise("Lanchonete Catedral L"), do: { "Alimentação", "Extras" }
+  defp categorise("Spotzza"), do: { "Alimentação", "Extras" }
+  defp categorise("Delicias da Lili Bolos"), do: { "Alimentação", "Extras" }
+  defp categorise("Bace S Dog"), do: { "Alimentação", "Extras" }
+  defp categorise("Pizzaria 4a"), do: { "Alimentação", "Extras" }
+  defp categorise("Bar Mandala"), do: { "Alimentação", "Extras" }
+  defp categorise("Dominos Sao Mateus"), do: { "Alimentação", "Extras" }
+  defp categorise("Cafeteria Grao Moente"), do: { "Alimentação", "Extras" }
+  defp categorise("Lanchonetepaula"), do: { "Alimentação", "Extras" }
+  defp categorise("Sushi Box"), do: { "Alimentação", "Extras" }
+  defp categorise("Sushi 2 You"), do: { "Alimentação", "Extras" }
+  defp categorise(<<"ARCOS DOURADOS", _::binary>>), do: { "Alimentação", "Extras" }
+  defp categorise("Organizacoes Pais e Fi"), do: { "Alimentação", "Extras" }
+  defp categorise("Padaria Sabor Real"), do: { "Alimentação", "Extras" }
+  defp categorise("Dirceu"), do: { "Alimentação", "Extras" }
+  defp categorise("Padaria Xavier"), do: { "Alimentação", "Extras" }
+  defp categorise("Empadonuts"), do: { "Alimentação", "Extras" }
+  defp categorise("Deligeli Sao Pedro Jf"), do: { "Alimentação", "Extras" }
+  defp categorise("Padaria Manchester"), do: { "Alimentação", "Extras" }
   defp categorise(<<"Rellicario", _::binary>>), do: { "Alimentação", "Extras" }
   defp categorise(<<"Sr A Granel", _::binary>>), do: { "Alimentação", "Extras" }
   # Alimentação - Feira
@@ -198,16 +221,30 @@ defmodule Transform do
   defp categorise("Mp *Dirceu"), do: { "Alimentação", "Feira" }
   defp categorise("Mp *Juliopedrocel"), do: { "Alimentação", "Feira" }
   defp categorise("Lauriano Alves da Silv"), do: { "Alimentação", "Feira" }
-  defp categorise("Hortalicasmes"), do: { "Alimentação", "Feira" }
   defp categorise("Frutas Souza"), do: { "Alimentação", "Feira" }
   defp categorise("Juliopedro"), do: { "Alimentação", "Feira" }
   defp categorise("Dirceuarmandodos"), do: { "Alimentação", "Feira" }
   defp categorise("Barraca da Juliana"), do: { "Alimentação", "Feira" }
+  defp categorise("Wemersonn Sollyzz"), do: { "Alimentação", "Feira" }
+  defp categorise("Danniellegarciale"), do: { "Alimentação", "Feira" }
+  defp categorise("Lucilearibeirode"), do: { "Alimentação", "Feira" }
+  defp categorise("Daianenairadasilv"), do: { "Alimentação", "Feira" }
+  defp categorise("Giseleferreira"), do: { "Alimentação", "Feira" }
+  defp categorise("Brandi e Abreu Comerci"), do: { "Alimentação", "Feira" }
+  defp categorise("Hortalicasmes"), do: { "Alimentação", "Feira" }
+  defp categorise("Guto Jf Ltda."), do: { "Alimentação", "Feira" }
+  defp categorise("Tarcisiodasilva"), do: { "Alimentação", "Feira" }
+  defp categorise("Supermercado Lis"), do: { "Alimentação", "Feira" }
+  defp categorise("Aloisio Carlos"), do: { "Alimentação", "Feira" }
+  defp categorise("Lauracamargode"), do: { "Alimentação", "Feira" }
+  defp categorise("Aloisio Carlos"), do: { "Alimentação", "Feira" }
+  defp categorise(""), do: { "Alimentação", "Feira" }
   # Alimentação - Mercado / Geral
   defp categorise("Carrefour Jfo"), do: { "Alimentação", "Mercado / Geral" }
   defp categorise("Carrefour Juiz de For"), do: { "Alimentação", "Mercado / Geral" }
   defp categorise("Lojas Americanas"), do: { "Alimentação", "Mercado / Geral" }
   defp categorise("Mix Ferreira Guimaraes"), do: { "Alimentação", "Mercado / Geral" }
+  defp categorise("Mercado Boa Vista"), do: { "Alimentação", "Mercado / Geral" }
   defp categorise(<<"Bahamas", _::binary>>), do: { "Alimentação", "Mercado / Geral" }
   defp categorise(<<"Supermercados Bh", _::binary>>), do: { "Alimentação", "Mercado / Geral" }
   defp categorise(<<"Assai Atacadista", _::binary>>), do: { "Alimentação", "Mercado / Geral" }
@@ -219,6 +256,8 @@ defmodule Transform do
   # Casa
   defp categorise(<<"Drogaria", _::binary>>), do: { "Casa", "Farmácia"}
   defp categorise("Drogalessa"), do: { "Casa", "Farmácia"}
+  defp categorise("Pague Menos"), do: { "Casa", "Farmácia"}
+  defp categorise("M e M Cosmeticos"), do: { "Casa", "Farmácia"}
   defp categorise("Paygo*Santa Luzia Gas"), do: { "Casa", "Gás"}
   defp categorise("Vava Gas"), do: { "Casa", "Gás"}
   defp categorise("2472drogasil"), do: { "Casa", "Farmácia" }
@@ -229,11 +268,15 @@ defmodule Transform do
   defp categorise("Papelaria Paraiso"), do: { "Casa", "Extras" }
   defp categorise("Frogpay*Ren Weng"), do: { "Casa", "Extras" }
   defp categorise("Cacula Juiz de Fora"), do: { "Casa", "Extras" }
+  defp categorise("Studio de Beleza Gilma"), do: { "Casa", "Extras" }
+  defp categorise("Casadochuveiro"), do: { "Casa", "Extras" }
   
   # Carro
+  defp categorise(<<"Uber Uber", _::binary>>), do: { "Carro", "Uber" }
   defp categorise("Liberty Parc"), do: { "Carro", "Seguro" }
-  defp categorise("Yelumseg Parc1"), do: { "Carro", "Seguro" }
+  defp categorise(<<"Yelumseg Parc", _::binary>>), do: { "Carro", "Seguro" }
   defp categorise("Mecanica Peracci"), do: { "Carro", "Concertos" }
+  defp categorise(<<"Box Sul", _::binary>>), do: { "Carro", "Concertos" }
   defp categorise(<<"Auto Posto", _::binary>>), do: { "Carro", "Combustível" }
   defp categorise(<<"Posto", _::binary>>), do: { "Carro", "Combustível" }
   defp categorise("Carrefour Pst 256 Pcj"), do: { "Carro", "Combustível" }
@@ -250,6 +293,7 @@ defmodule Transform do
   defp categorise("NuTag*GVE3976"), do: { "Carro", "Tag" }
   defp categorise(<<"Uber", _::binary>>), do: { "Carro", "Uber"}
   defp categorise(<<"Pneu Free Com - Parcela", _::binary>>), do: { "carro", "Pneu"}
+  defp categorise("Shopping Independencia"), do: { "Carro", "Estacionamento" }
   # lazer
   defp categorise("Varandao Bh Rio Restau"), do: { "Lazer", "Viagem"}
   defp categorise("Ciceroalves"), do: { "Lazer", "Viagem"}
@@ -262,11 +306,15 @@ defmodule Transform do
   defp categorise("Supermercado Lis"), do: { "Lazer", "Viagem"}
   defp categorise("Henioinacioda"), do: { "Lazer", "Viagem"}
   defp categorise("Monica Maria Fernandes"), do: { "Lazer", "Viagem"}
+  defp categorise("Merceariasilveira"), do: { "Lazer", "Viagem"}
+  defp categorise("Padariadoteteu"), do: { "Lazer", "Viagem"}
   defp categorise("Paulocustodio"), do: { "Lazer", "Viagem"}
   defp categorise("Oba Oba"), do: { "Lazer", "Viagem"}
   defp categorise("Cantinho da Roca"), do: { "Lazer", "Viagem"}
   defp categorise("Hotel Gauchao"), do: { "Lazer", "Viagem"}
-  defp categorise(<<"Cvc Brasil - Parcela", _::binary>>), do: { "Lazer", "viagem"}
+  defp categorise(<<"Cvc Brasil", _::binary>>), do: { "Lazer", "Viagem"}
+  defp categorise("Barerestaurante"), do: { "Lazer", "Extras"}
+  defp categorise("Bar e Pizzaria do Tiqu"), do: { "Lazer", "Extras"}
   # Cachorro
   defp categorise("Centro Medico Veterina"), do: { "Cachorro", "Saúde"}
   defp categorise("Animaniacs Petshop"), do: { "Cachorro", "Petshop"}
@@ -276,6 +324,12 @@ defmodule Transform do
   defp categorise("Anjoanasmoda"), do: { "Luna", "Enxoval" }
   defp categorise("Laboratorio Cortes Vi"), do: { "Luna", "Saúde" }
   defp categorise(<<"Hyber Ginastica", _::binary>>), do: { "Luna", "Escola" }
+  defp categorise("Lojas Domith"), do: { "Luna", "Extras" }
+  defp categorise("Arco Iris Livraria"), do: { "Luna", "Extras" }
+  defp categorise("Kids"), do: { "Luna", "Extras" }
+  defp categorise("Brinquedao"), do: { "Luna", "Extras" }
+  defp categorise("Tete Festas"), do: { "Luna", "Extras" }
+  defp categorise("Fl *Vinklopresentes"), do: { "Luna", "Extras" }
 
   # Default
   defp categorise(_), do: { "", "" }
@@ -285,6 +339,12 @@ end
 ## Parse data
 
 <!-- livebook:{"reevaluate_automatically":true} -->
+
+```elixir
+input =
+  Path.join(["/home", "lucas", "Downloads", "Nubank_2025-07-27.csv"])
+  |> File.stream!()
+```
 
 ```elixir
 # parse input file
@@ -347,4 +407,4 @@ FormatData.tabulate(parsed_data)
 
 ```
 
-<!-- livebook:{"offset":16977,"stamp":{"token":"XCP.eDsZArz_KnU3FgIYmKIAi6ZjUQc6hj5DgKo_97bT95SBs5pStEg8yxzAjfRrxBQ7aqRlFEVuhnMWl-AV1wUAUFctdXton-_GtkLm4g","version":2}} -->
+<!-- livebook:{"offset":20724,"stamp":{"token":"XCP.YHzdvhNvfE6ZGpBssB5ZCc_D9gzBIGEQwuvKU6IZTxIKRnvTa2Gefmmhy8QF0FnuTHHEBnaeqJthbudFW7LwmmgVvcAq53ZiTf-c9cVUgoPHQ5PsoHxmV0fZ5rv_xtRo56WQRxkvCivlpdOv2dzYgDC8ESt3FvWsFLLwKXNMzZNbEpNgIeDuuWDegK7QCcOORgPrEIRe0YK2gqDxQzcsBWYIETLa_ls0G-ZbE_xc2Ik9vS3QWh7EaDHJVOYli_efXsFe7mJAkK3xTaZeCoTO9Sgsqryy6dvDxCHhcuTTo2j_zUE1JJD64luvw76AJeoNx34MrJ9N-IqVHSs964BfFIQfjotqxDk","version":2}} -->
